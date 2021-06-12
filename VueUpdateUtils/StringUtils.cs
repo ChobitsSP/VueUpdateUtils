@@ -51,7 +51,7 @@ namespace VueUpdateUtils
             foreach (Match m in regList)
             {
                 var moduleName = m.Groups[1].Value;
-                var modulePath = m.Groups[2].Value;
+                // var modulePath = GetFileRealPath(rootDir, filePath, m.Groups[2].Value);
 
                 if (CheckIsUsed(str, m.Value, moduleName) == false)
                 {
@@ -60,6 +60,22 @@ namespace VueUpdateUtils
             }
 
             File.WriteAllLines(filePath, lines, encoding);
+        }
+
+        static string GetFileRealPath(string rootDir, string filePath, string modulePath)
+        {
+            var result = modulePath.Replace('/', '\\');
+
+            if (result.StartsWith(ROOT_PREFIX))
+            {
+                result = Path.Combine(rootDir, result.Substring(2));
+            }
+            else
+            {
+                result = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(filePath), result));
+            }
+
+            return result;
         }
 
         public static void AddVueExtension(string rootDir, string filePath, string ext = ".vue")
@@ -80,29 +96,23 @@ namespace VueUpdateUtils
             foreach (Match m in regList)
             {
                 var moduleName = m.Groups[1].Value;
-                var modulePath = m.Groups[2].Value.Replace('/', '\\');
+                var modulePath = GetFileRealPath(rootDir, filePath, m.Groups[2].Value);
 
-                if (modulePath.StartsWith(ROOT_PREFIX))
+                if (File.Exists(modulePath)) continue;
+
+                var VueFile = modulePath + ext;
+
+                if (!File.Exists(VueFile)) continue;
+
+                for (var i = 0; i < lines.Length; i++)
                 {
-                    modulePath = Path.Combine(rootDir, modulePath.Substring(2));
+                    var line = lines[i];
 
-                    if (File.Exists(modulePath)) continue;
-
-                    var VueFile = modulePath + ext;
-
-                    if (File.Exists(VueFile))
+                    if (line.Contains(m.Value))
                     {
-                        for (var i = 0; i < lines.Length; i++)
-                        {
-                            var line = lines[i];
-
-                            if (line.Contains(m.Value))
-                            {
-                                lines[i] = reg1.Replace(line, "import $1 from '$2'" + ext);
-                                hasChange = true;
-                                break;
-                            }
-                        }
+                        lines[i] = reg1.Replace(line, string.Format("import $1 from '$2{0}'", ext));
+                        hasChange = true;
+                        break;
                     }
                 }
             }
