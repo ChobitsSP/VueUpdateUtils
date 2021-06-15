@@ -21,7 +21,7 @@ namespace VueUpdateUtils
 
                 dic["AddVueExtension"] = new AddVueExtension() { ext = "*.vue" };
                 dic["RemoveUnUsedImport"] = new RemoveUnUsedImport();
-                dic["ReplaceOldImport"] = new RemoveUnUsedImport();
+                dic["ReplaceOldImport"] = new ReplaceOldImport();
 
                 var task = dic["ReplaceOldImport"];
 
