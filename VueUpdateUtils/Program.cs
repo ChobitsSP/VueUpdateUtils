@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VueUpdateUtils.Tasks;
 
 namespace VueUpdateUtils
 {
@@ -16,14 +17,19 @@ namespace VueUpdateUtils
                 Console.WriteLine("input dir:");
                 var dir = Console.ReadLine();
 
-                var files = Directory.GetFiles(dir, "*.vue", SearchOption.AllDirectories);
+                var dic = new Dictionary<string, BaseTask>();
 
-                foreach (var file in files)
-                {
-                    StringUtils.AddVueExtension(dir, file);
-                }
+                dic["AddVueExtension"] = new AddVueExtension() { ext = "*.vue" };
+                dic["RemoveUnUsedImport"] = new RemoveUnUsedImport();
+                dic["ReplaceOldImport"] = new RemoveUnUsedImport();
 
-                Console.WriteLine("success!");
+                var task = dic["ReplaceOldImport"];
+
+                task.rootDir = dir;
+
+                var count = task.Run();
+
+                Console.WriteLine("success! total count: {0}", count);
             }
         }
     }
