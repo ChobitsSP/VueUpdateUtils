@@ -20,16 +20,16 @@ namespace VueUpdateUtils
                 var dic = new Dictionary<string, BaseTask>();
 
                 dic["AddVueExtension"] = new AddVueExtension();
-                dic["RemoveUnUsedImport"] = new RemoveUnUsedImport();
+                // dic["RemoveUnUsedImport"] = new RemoveUnUsedImport();
                 dic["ReplaceOldImport"] = new ReplaceOldImport();
 
-                var task = dic["AddVueExtension"];
-
-                task.rootDir = dir;
-
-                var count = task.Run();
-
-                Console.WriteLine("success! total count: {0}", count);
+                foreach (var kv in dic)
+                {
+                    var task = kv.Value;
+                    task.rootDir = dir;
+                    var count = task.Run();
+                    Console.WriteLine("{0} success! total count: {1}", kv.Key, count);
+                }
             }
         }
     }
