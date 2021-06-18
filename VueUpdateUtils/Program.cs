@@ -19,11 +19,11 @@ namespace VueUpdateUtils
 
                 var dic = new Dictionary<string, BaseTask>();
 
-                dic["AddVueExtension"] = new AddVueExtension() { ext = "*.vue" };
+                dic["AddVueExtension"] = new AddVueExtension();
                 dic["RemoveUnUsedImport"] = new RemoveUnUsedImport();
                 dic["ReplaceOldImport"] = new ReplaceOldImport();
 
-                var task = dic["ReplaceOldImport"];
+                var task = dic["AddVueExtension"];
 
                 task.rootDir = dir;
 
